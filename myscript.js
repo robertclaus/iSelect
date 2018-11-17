@@ -1,5 +1,43 @@
 console.log("My Extension Is Running!!!");
 
+function keyUpHandler(event)
+{
+	var key = event.key || event.keyCode;
+	if (key === 'Tab' || key === 9){
+		findAndSelect()
+	}
+}
+
+document.addEventListener('keyup', keyUpHandler);
+
+function findAndSelect()
+{
+	var bestElement = findClosestElement(100,100)
+	bestElement.focus()
+}
+
+function findClosestElement(goalX,goalY)
+{
+	var buttons = document.getElementsByTagName("button"); 
+	var shortestDistance = null;
+	for (var i = 0; i < buttons.length; i++) { 
+    	var rect = buttons[i].getBoundingClientRect()
+    	var distance = calcDistance(rect.x,rect.y,goalX,goalY)
+    	if (distance < shortestDistance || shortestDistance == null) { 
+        	shortestDistance = distance;
+        	closestEl = buttons[i]
+    	}
+	}
+	return closestEl;
+}
+
+function calcDistance (x1, y1, x2, y2) {
+  var deltaX = Math.abs(x1-x2);
+  var deltaY = Math.abs(y1-y2);
+  var dist = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+  return (dist);
+};
+
 function createPoint(){
 	var canvas = document.createElement('canvas');
 
