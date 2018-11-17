@@ -33,10 +33,11 @@ window.addEventListener('load', function(){
 	webgazer.setRegression('ridge') /* currently must set regression and tracker */
         .setTracker('clmtrackr')
         .setGazeListener(function(data, clock) {
-            console.log("data returned: "+data);
 			if(data){
-				var x = data.x;
-				var y = data.y;
+				var filtered_point = filterPoint(data.x, data.y, clock);
+				var x = filtered_point.x;
+				var y = filtered_point.y;
+				
 				console.log(x+","+y);
 				setPointPosition(x,y);
 			}        
