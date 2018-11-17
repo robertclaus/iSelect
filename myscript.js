@@ -7,7 +7,7 @@ function createPoint(){
 	canvas.id = "extensionPoint";
 	canvas.width = 15;
 	canvas.height = 15;
-	canvas.style.zIndex = 8;
+	canvas.style.zIndex = 10000;
 	canvas.style.position = "absolute";
 	
 	var ctx = canvas.getContext("2d");
@@ -27,5 +27,11 @@ function setPointPosition(x, y){
 	canvas.style.top = y + 'px';
 }
 
-createPoint();
-setPointPosition(100,100);
+window.addEventListener('load', function(){
+	console.log("Hello Robert");
+	createPoint();
+	webgazer.begin();
+	var prediction = webgazer.getCurrentPrediction()
+	console.log(prediction.x+","+prediction.y);
+	setPointPosition(prediction.x,prediction.y);
+});
