@@ -26,7 +26,7 @@
   "content_scripts": [
    {
      "matches": ["<all_urls>"],
-     "js": ["myscript.js"],
+     "js": ["myscript.js", "webgazer.js"],
 	 "run_at":"document_idle"
    }
 	],

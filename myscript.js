@@ -1,6 +1,5 @@
 console.log("My Extension Is Running!!!");
 
-
 function createPoint(){
 	var canvas = document.createElement('canvas');
 
@@ -13,7 +12,7 @@ function createPoint(){
 	var ctx = canvas.getContext("2d");
 	ctx.beginPath();
 	ctx.arc(6,6,4,0,2*Math.PI);
-	ctx.fillStyle = "red";
+	ctx.fillStyle = "blue";
 	ctx.fill();
 	ctx.stroke();
 	
@@ -30,8 +29,17 @@ function setPointPosition(x, y){
 window.addEventListener('load', function(){
 	console.log("Hello Robert");
 	createPoint();
-	webgazer.begin();
-	var prediction = webgazer.getCurrentPrediction()
-	console.log(prediction.x+","+prediction.y);
-	setPointPosition(prediction.x,prediction.y);
+	
+	webgazer.setRegression('ridge') /* currently must set regression and tracker */
+        .setTracker('clmtrackr')
+        .setGazeListener(function(data, clock) {
+            console.log("data returned: "+data);
+			if(data){
+				var x = data.x;
+				var y = data.y;
+				console.log(x+","+y);
+				setPointPosition(x,y);
+			}        
+		})
+        .begin();
 });
