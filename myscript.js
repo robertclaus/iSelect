@@ -5,14 +5,14 @@ function createPoint(){
 	var canvas = document.createElement('canvas');
 
 	canvas.id = "extensionPoint";
-	canvas.width = 5;
-	canvas.height = 5;
+	canvas.width = 15;
+	canvas.height = 15;
 	canvas.style.zIndex = 8;
 	canvas.style.position = "absolute";
 	
 	var ctx = canvas.getContext("2d");
 	ctx.beginPath();
-	ctx.arc(0,0,4,0,2*Math.PI);
+	ctx.arc(6,6,4,0,2*Math.PI);
 	ctx.fillStyle = "red";
 	ctx.fill();
 	ctx.stroke();
