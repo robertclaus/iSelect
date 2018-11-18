@@ -6,12 +6,12 @@
 	float:right;
 }
 
-.bottomleft{
+div.bottomleft{
 	position: absolute;
 	bottom: 10px;
 }
 
-.bottomright{
+div.bottomright{
 	position: absolute;
 	bottom: 10px;
 	right: 10px;
