@@ -17,7 +17,7 @@ var lastIcon = "";
 chrome.runtime.onMessage.addListener(
   function(request, sender, sendResponse) {
 	var newIcon = request.imagePath;
-	if(newIcon != lastIcon){
+	if(newIcon && newIcon != lastIcon){
 		lastIcon=newIcon;
 		chrome.browserAction.setIcon({ path: {"128":"images/"+newIcon}});
 	}
