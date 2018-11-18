@@ -10896,7 +10896,7 @@ function store_points(x, y, k) {
             'data': regs[0].getData() || data
         };
 
-        storage.data = storage.data.slice(Math.max(storasge.data.length - 50, 1))
+        storage.data = storage.data.slice(Math.max(storage.data.length - 50, 1))
         window.localStorage.setItem(localstorageLabel, JSON.stringify(storage));
         //TODO data should probably be stored in webgazer object instead of each regression model
         //     -> requires duplication of data, but is likely easier on regression model implementors
