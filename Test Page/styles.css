@@ -1,24 +1,44 @@
 .topleft{
 	float:left;
+	padding-top: 20px;
+	padding-left: 10px;
 }
 
 .topright{
 	float:right;
+	padding-top: 20px;
+	padding-right: 10px;
 }
 
 div.bottomleft{
 	position: absolute;
-	bottom: 10px;
+	bottom: 30px;
+	left: 20px;
 }
 
 div.bottomright{
 	position: absolute;
-	bottom: 10px;
-	right: 10px;
+	bottom: 30px;
+	right: 20px;
 }
 
 .middle{
 	position: absolute;
 	top:50%;
-	left:50%;
+	left:47%;
+}
+
+.icon{
+	position: absolute;
+	margin-left: 40%;
+}
+
+button:focus{
+	background: #ce3030;
+	outline-color: gray;
+}
+
+input:focus{
+	background: #ce3030;
+	outline-color: gray;
 }
