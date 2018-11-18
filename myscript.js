@@ -83,27 +83,59 @@ function setPointPosition(x, y){
 }
 
 window.addEventListener('load', function(){
-	var use_gaze = true;
-	chrome.storage.sync.get({
-		use_gaze: true,
-		  }, function(items) {
-			  use_gaze = items.use_gaze;
-		  });
-	
-	createPoint();
-	
-	if(use_gaze){
-		webgazer.setRegression('ridge') /* currently must set regression and tracker */
-			.setTracker('clmtrackr')
-			.setGazeListener(function(data, clock) {
-				if(data){
-					var filtered_point = filterPoint(data.x, data.y, clock);
-					var x = filtered_point.x;
-					var y = filtered_point.y;
+	chrome.storage.sync.get(['use_gaze','show_gaze', 'show_face'], function(items) {
+		console.log(items.use_gaze + ", " + items.show_gaze + ", " + items.show_face);
+
+		if(items.use_gaze){
+			if(items.show_gaze){
+				createPoint();
+			}
+			
+			webgazer.setRegression('ridge') /* currently must set regression and tracker */
+				.setTracker('clmtrackr')
+				.setGazeListener(function(data, clock) {
+					if(data){
+						var filtered_point = filterPoint(data.x, data.y, clock);
+						var x = filtered_point.x;
+						var y = filtered_point.y;
+						
+						if(items.show_gaze){
+							setPointPosition(x,y);
+						}
+					}
 					
-					setPointPosition(x,y);
-				}        
-			})
-			.begin();
-	}
+					var feedbackBox = document.getElementById('webgazerFaceFeedbackBox');
+					if(feedbackBox){
+						var feedbackLocked = feedbackBox.style.border.includes("green");
+						if(feedbackLocked){
+							changeIcon("good128.png");
+							//chrome.browserAction.setIcon({ path: {"128":"images/good128.png"}});
+						} else {
+							changeIcon("bad128.png");
+							//chrome.browserAction.setIcon({ path: {"128":"images/bad128.png"}});
+						}
+					}
+					
+					
+					
+					if(!items.show_face) {
+						var elements_to_hide = ["webgazerVideoFeed", "webgazerFaceOverlay", "webgazerFaceFeedbackBox"];
+						elements_to_hide.forEach(function(elem){
+							var video_element = document.getElementById(elem);
+							if(video_element){
+								video_element.style.display = "none";
+							}
+						});
+					}
+				})
+				.begin();
+		}
+	  });
+	
+	
 });
+
+function changeIcon(image){
+	chrome.runtime.sendMessage({imagePath: image}, function(response) {
+    });
+}
