@@ -23,7 +23,7 @@ function findAndSelect()
 	var bestElement = findClosestElement(current_point)
 	if (bestElement !== null)
 	{
-		bestElement.focus()
+		bestElement.parentElement.firstElementChild.focus()
 	}
 }
 
