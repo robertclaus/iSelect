@@ -4,7 +4,7 @@
 
 'use strict';
 
-var checkList = ['use_gaze', 'show_gaze', 'show_face'];
+var checkList = ['use_gaze', 'show_gaze', 'show_face', 'do_calibration'];
 
 
 // Saves options to chrome.storage

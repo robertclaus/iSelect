@@ -8,7 +8,8 @@ chrome.runtime.onInstalled.addListener(function() {
 	  	chrome.storage.sync.set({
 			use_gaze: true,
 			show_gaze: false,
-			show_face: false
+			show_face: false,
+			do_calibration: true
 		}, function() {
 	  });
 });

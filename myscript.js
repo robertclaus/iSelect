@@ -100,6 +100,7 @@ window.addEventListener('load', function(){
 		  if(request.resetGazer){
 			console.log("Reset Gazer Received");
 			changeSettings();
+			webgazer.do_click_calibration = do_calibration;
 		  }
 		  
 		  if(request.clearData){
@@ -116,13 +117,14 @@ window.addEventListener("beforeunload", function (e) {
 var show_face = true;
 var show_gaze = true;
 var use_gaze =true;
+var do_calibration = true;
 
 function changeSettings(){
 	chrome.storage.sync.get(['use_gaze','show_gaze', 'show_face'], function(items) {
 		use_gaze = items.use_gaze;
 		show_gaze = items.show_gaze;
 		show_face = items.show_face;
-		console.log(items.use_gaze + ", " + items.show_gaze + ", " + items.show_face);
+		do_calibration = items.do_calibration;
 	});
 }
 

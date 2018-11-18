@@ -9640,8 +9640,19 @@ var mosseFilterResponses = function() {
     webgazer.reg.RidgeReg.prototype.setData = function(data) {
         for (var i = 0; i < data.length; i++) {
             //TODO this is a kludge, needs to be fixed
-            data[i].eyes.left.patch = new ImageData(new Uint8ClampedArray(data[i].eyes.left.patch), data[i].eyes.left.width, data[i].eyes.left.height);
-            data[i].eyes.right.patch = new ImageData(new Uint8ClampedArray(data[i].eyes.right.patch), data[i].eyes.right.width, data[i].eyes.right.height);
+ 			var b = [];
+			for(key in data[i].eyes.left.patch.data) {
+				b.push(data[i].eyes.left.patch.data[key]);
+			}
+            data[i].eyes.left.patch = new ImageData(new Uint8ClampedArray(b), data[i].eyes.left.width, data[i].eyes.left.height);
+			
+			
+			var b = [];
+			for(key in data[i].eyes.right.patch.data) {
+				b.push(data[i].eyes.right.patch.data[key]);
+			}
+            data[i].eyes.right.patch = new ImageData(new Uint8ClampedArray(b), data[i].eyes.right.width, data[i].eyes.right.height);
+			
             this.addData(data[i].eyes, data[i].screenPos, data[i].type);
         }
     };
@@ -10458,7 +10469,7 @@ function store_points(x, y, k) {
     webgazer.tracker = webgazer.tracker || {};
     webgazer.reg = webgazer.reg || {};
     webgazer.params = webgazer.params || {};
-
+	webgazer.do_click_calibration = true;
     //PRIVATE VARIABLES
 
     //video elements
@@ -10819,7 +10830,9 @@ function store_points(x, y, k) {
      * @param {Event} event - The listened event
      */
     var clickListener = function(event) {
-        recordScreenPosition(event.clientX, event.clientY, eventTypes[0]); // eventType[0] === 'click'
+		if(webgazer.do_click_calibration){
+			recordScreenPosition(event.clientX, event.clientY, eventTypes[0]); // eventType[0] === 'click'
+		}
     };
 
     /**
