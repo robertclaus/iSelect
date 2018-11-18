@@ -1,18 +1,22 @@
 console.log("My Extension Is Running!!!");
 var previous_point = {x:0, y:0, t:0};
+var isFaceDetected = false;
 var _tabResetDist = 100;
 
 function keyUpHandler(event)
 {
-	var key = event.key || event.keyCode;
-	if (key === 'Tab' || key === 9){
-		if (calcDistance(previous_point,current_point) > _tabResetDist)
-		{
-			findAndSelect()
-			event.preventDefault();
-    		event.stopPropagation();
+	if (isFaceDetected)
+	{
+		var key = event.key || event.keyCode;
+		if (key === 'Tab' || key === 9){
+			if (calcDistance(previous_point,current_point) > _tabResetDist)
+			{
+				findAndSelect()
+				event.preventDefault();
+    			event.stopPropagation();
+			}
+			previous_point = current_point;
 		}
-		previous_point = current_point;
 	}
 }
 
@@ -155,6 +159,7 @@ function updateIcon(){
 	var feedbackBox = document.getElementById('webgazerFaceFeedbackBox');
 	if(feedbackBox){
 		var feedbackLocked = feedbackBox.style.border.includes("green");
+		isFaceDetected = feedbackLocked;
 		if(feedbackLocked){
 			changeIcon("good128.png");
 		} else {
