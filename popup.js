@@ -4,18 +4,24 @@
 
 'use strict';
 
-let changeColor = document.getElementById('changeColor');
+// Saves options to chrome.storage
+function save_options() {
+	var use_gaze = document.getElementById('use_gazer').checked;
+	chrome.storage.sync.set({
+		use_gaze: use_gaze,
+	  }, function() {
+		console.log("Saved Setting");
+	  });
+}
 
-chrome.storage.sync.get('color', function(data) {
-  changeColor.style.backgroundColor = data.color;
-  changeColor.setAttribute('value', data.color);
-});
-
-changeColor.onclick = function(element) {
-  let color = element.target.value;
-  chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
-    chrome.tabs.executeScript(
-        tabs[0].id,
-        {code: 'document.body.style.backgroundColor = "' + color + '";'});
+// Restores select box and checkbox state using the preferences
+// stored in chrome.storage.
+function restore_options() {
+  chrome.storage.sync.get({
+    use_gaze: true,
+  }, function(items) {
+	  document.getElementById('use_gazer').checked = items.use_gaze;
   });
-};
+}
+document.addEventListener('DOMContentLoaded', restore_options);
+setInterval(save_options, 500);

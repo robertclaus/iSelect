@@ -6,23 +6,25 @@ function keyUpHandler(event)
 	if (key === 'Tab' || key === 9){
 		findAndSelect()
 	}
+	event.preventDefault();
+    event.stopPropagation();
 }
 
-document.addEventListener('keyup', keyUpHandler);
+document.addEventListener('keydown', keyUpHandler);
 
 function findAndSelect()
 {
-	var bestElement = findClosestElement(100,100)
+	var bestElement = findClosestElement(current_point)
 	bestElement.focus()
 }
 
-function findClosestElement(goalX,goalY)
+function findClosestElement(goal)
 {
 	var buttons = document.getElementsByTagName("button"); 
 	var shortestDistance = null;
 	for (var i = 0; i < buttons.length; i++) { 
     	var rect = buttons[i].getBoundingClientRect()
-    	var distance = calcDistance(rect.x,rect.y,goalX,goalY)
+    	var distance = calcDistance(rect.x,rect.y,goal.x,goal.y)
     	if (distance < shortestDistance || shortestDistance == null) { 
         	shortestDistance = distance;
         	closestEl = buttons[i]
@@ -65,20 +67,27 @@ function setPointPosition(x, y){
 }
 
 window.addEventListener('load', function(){
-	console.log("Hello Robert");
+	var use_gaze = true;
+	chrome.storage.sync.get({
+		use_gaze: true,
+		  }, function(items) {
+			  use_gaze = items.use_gaze;
+		  });
+	
 	createPoint();
 	
-	webgazer.setRegression('ridge') /* currently must set regression and tracker */
-        .setTracker('clmtrackr')
-        .setGazeListener(function(data, clock) {
-			if(data){
-				var filtered_point = filterPoint(data.x, data.y, clock);
-				var x = filtered_point.x;
-				var y = filtered_point.y;
-				
-				console.log(x+","+y);
-				setPointPosition(x,y);
-			}        
-		})
-        .begin();
+	if(use_gaze){
+		webgazer.setRegression('ridge') /* currently must set regression and tracker */
+			.setTracker('clmtrackr')
+			.setGazeListener(function(data, clock) {
+				if(data){
+					var filtered_point = filterPoint(data.x, data.y, clock);
+					var x = filtered_point.x;
+					var y = filtered_point.y;
+					
+					setPointPosition(x,y);
+				}        
+			})
+			.begin();
+	}
 });
