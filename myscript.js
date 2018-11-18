@@ -86,60 +86,92 @@ function setPointPosition(x, y){
 	canvas.style.top = y + 'px';
 }
 
-window.addEventListener('load', function(){
-	chrome.storage.sync.get(['use_gaze','show_gaze', 'show_face'], function(items) {
-		console.log(items.use_gaze + ", " + items.show_gaze + ", " + items.show_face);
+var has_started = false;
 
-		if(items.use_gaze){
-			if(items.show_gaze){
-				createPoint();
-			}
-			
-			webgazer.setRegression('ridge') /* currently must set regression and tracker */
-				.setTracker('clmtrackr')
-				.setGazeListener(function(data, clock) {
-					if(data){
-						var filtered_point = filterPoint(data.x, data.y, clock);
-						var x = filtered_point.x;
-						var y = filtered_point.y;
-						
-						if(items.show_gaze){
-							setPointPosition(x,y);
-						}
-					}
-					
-					var feedbackBox = document.getElementById('webgazerFaceFeedbackBox');
-					if(feedbackBox){
-						var feedbackLocked = feedbackBox.style.border.includes("green");
-						if(feedbackLocked){
-							changeIcon("good128.png");
-							//chrome.browserAction.setIcon({ path: {"128":"images/good128.png"}});
-						} else {
-							changeIcon("bad128.png");
-							//chrome.browserAction.setIcon({ path: {"128":"images/bad128.png"}});
-						}
-					}
-					
-					
-					
-					if(!items.show_face) {
-						var elements_to_hide = ["webgazerVideoFeed", "webgazerFaceOverlay", "webgazerFaceFeedbackBox"];
-						elements_to_hide.forEach(function(elem){
-							var video_element = document.getElementById(elem);
-							if(video_element){
-								video_element.style.display = "none";
-							}
-						});
-					}
-				})
-				.begin();
-		}
-	  });
+window.addEventListener('load', function(){
+	createPoint(show_gaze);
 	
+	changeSettings();
 	
+	startWebGazer();
+	
+	chrome.runtime.onMessage.addListener(
+	  function(request, sender, sendResponse) {
+		  if(request.resetGazer){
+			console.log("Reset Gazer Received");
+			changeSettings();
+		  }
+		  
+		  if(request.clearData){
+			  console.log("Start Clear Data");
+			  webgazer.clearData();
+		  }
+  });
 });
 
-function changeIcon(image){
-	chrome.runtime.sendMessage({imagePath: image}, function(response) {
-    });
+window.addEventListener("beforeunload", function (e) {
+	webgazer.end();
+});
+
+var show_face = true;
+var show_gaze = true;
+var use_gaze =true;
+
+function changeSettings(){
+	chrome.storage.sync.get(['use_gaze','show_gaze', 'show_face'], function(items) {
+		use_gaze = items.use_gaze;
+		show_gaze = items.show_gaze;
+		show_face = items.show_face;
+		console.log(items.use_gaze + ", " + items.show_gaze + ", " + items.show_face);
+	});
+}
+
+function startWebGazer(){
+	webgazer.setRegression('ridge') /* currently must set regression and tracker */
+		.setTracker('clmtrackr')
+		.setGazeListener(function(data, clock) {
+			if(data){
+				var filtered_point = filterPoint(data.x, data.y, clock);
+				
+				setPointPosition(filtered_point.x,filtered_point.y);
+			}
+			
+			updateIcon();
+			
+			showElements(["webgazerVideoFeed", "webgazerFaceOverlay", "webgazerFaceFeedbackBox"], show_face);
+			showElements(["extensionPoint"], show_gaze);
+		})
+		
+	webgazer.begin();
+}
+
+function updateIcon(){
+	
+	function changeIcon(image){
+		chrome.runtime.sendMessage({imagePath: image}, function(response) {
+		});
+	}
+	
+	var feedbackBox = document.getElementById('webgazerFaceFeedbackBox');
+	if(feedbackBox){
+		var feedbackLocked = feedbackBox.style.border.includes("green");
+		if(feedbackLocked){
+			changeIcon("good128.png");
+		} else {
+			changeIcon("bad128.png");
+		}
+	}
+}
+
+function showElements(elements_to_hide, should_show){
+	var mode = "none";
+	if(should_show) {
+		mode = "block";
+	}
+	elements_to_hide.forEach(function(elem){
+		var el = document.getElementById(elem);
+		if(el){
+			el.style.display = mode;
+		}
+	});
 }
