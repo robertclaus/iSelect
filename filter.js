@@ -55,8 +55,6 @@ function _calculateFilter(axis){
 	var In = integral*I;
 	var De = derivative*D;
 	
-	console.log("P: "+Math.round(Pr)+"   I: "+Math.round(In)+"   D: "+Math.round(De));
-	
 	return Pr + In + De;
 }
 

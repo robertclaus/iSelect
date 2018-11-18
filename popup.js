@@ -4,12 +4,18 @@
 
 'use strict';
 
+var checkList = ['use_gaze', 'show_gaze', 'show_face'];
+
+
 // Saves options to chrome.storage
 function save_options() {
-	var use_gaze = document.getElementById('use_gazer').checked;
-	chrome.storage.sync.set({
-		use_gaze: use_gaze,
-	  }, function() {
+	var setter = {};
+	
+	  checkList.forEach(function(entry){
+		  setter[entry] = document.getElementById(entry).checked;
+	  });
+
+	chrome.storage.sync.set(setter, function() {
 		console.log("Saved Setting");
 	  });
 }
@@ -17,11 +23,25 @@ function save_options() {
 // Restores select box and checkbox state using the preferences
 // stored in chrome.storage.
 function restore_options() {
-  chrome.storage.sync.get({
-    use_gaze: true,
-  }, function(items) {
-	  document.getElementById('use_gazer').checked = items.use_gaze;
+  chrome.storage.sync.get(checkList, function(items) {
+	  checkList.forEach(function(entry){
+		  document.getElementById(entry).checked = items[entry];
+	  });
   });
 }
 document.addEventListener('DOMContentLoaded', restore_options);
-setInterval(save_options, 500);
+checkList.forEach(function(entry){
+	document.getElementById(entry).addEventListener('change', save_options);
+});
+
+
+var lastIcon = "";
+chrome.runtime.onMessage.addListener(
+  function(request, sender, sendResponse) {
+	var newIcon = request.imagePath;
+	if(newIcon != lastIcon){
+		lastIcon=newIcon;
+		chrome.browserAction.setIcon({ path: {"128":"images/"+newIcon}});
+	}
+	sendResponse({farewell: "goodbye"});
+  });
