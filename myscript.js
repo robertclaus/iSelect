@@ -21,7 +21,10 @@ document.addEventListener('keydown', keyUpHandler);
 function findAndSelect()
 {
 	var bestElement = findClosestElement(current_point)
-	bestElement.focus()
+	if (bestElement !== null)
+	{
+		bestElement.focus()
+	}
 }
 
 function findClosestElement(goal)
@@ -31,18 +34,19 @@ function findClosestElement(goal)
 	var inputs = document.getElementsByTagName("input");
 	var selects = document.getElementsByTagName("select");
 	var textAreas = document.getElementsByTagName("textarea");
-	var elementsByType = {buttons,anchors,inputs,selects,textAreas};
+	var elementsByType = [buttons,anchors,inputs,selects,textAreas];
 	var shortestDistance = null;
+	var closestEl = null;
 
 	for (var type = 0; type < elementsByType.length; type++)
 	{
-		var elements = elementsByType[i];
+		var elements = elementsByType[type];
 		for (var el = 0; el < elements.length; el++) { 
     		var pos = elements[el].getBoundingClientRect()
     		var distance = calcDistance(pos,goal)
     		if (distance < shortestDistance || shortestDistance == null) { 
         		shortestDistance = distance;
-        		closestEl = elements[i]
+        		closestEl = elements[el]
     		}
 		}
 	}
