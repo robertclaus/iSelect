@@ -133,22 +133,24 @@ function changeSettings(){
 }
 
 function startWebGazer(){
-	webgazer.setRegression('ridge') /* currently must set regression and tracker */
-		.setTracker('clmtrackr')
-		.setGazeListener(function(data, clock) {
-			if(data){
-				var filtered_point = filterPoint(data.x, data.y, clock);
-				
-				setPointPosition(filtered_point.x,filtered_point.y);
-			}
-			
-			updateIcon();
-			
-			showElements(["webgazerVideoFeed", "webgazerFaceOverlay", "webgazerFaceFeedbackBox"], show_face);
-			showElements(["extensionPoint"], show_gaze);
-		})
-		
-	webgazer.begin();
+    if(use_gaze){
+        webgazer.setRegression('ridge') /* currently must set regression and tracker */
+            .setTracker('clmtrackr')
+            .setGazeListener(function(data, clock) {
+                if(data){
+                    var filtered_point = filterPoint(data.x, data.y, clock);
+
+                    setPointPosition(filtered_point.x,filtered_point.y);
+                }
+
+                updateIcon();
+
+                showElements(["webgazerVideoFeed", "webgazerFaceOverlay", "webgazerFaceFeedbackBox"], show_face);
+                showElements(["extensionPoint"], show_gaze);
+            });
+
+        webgazer.begin();
+	}
 }
 
 function updateIcon(){

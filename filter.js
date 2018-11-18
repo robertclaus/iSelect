@@ -5,7 +5,7 @@ var D = 20.0;
 
 var values = [];
 var valueDepth = 20;
-var derivativeMin = 150*D;
+var derivativeMin = 200*D;
 
 var current_point = {x:0, y:0, t:0};
 
