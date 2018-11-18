@@ -1,13 +1,19 @@
 console.log("My Extension Is Running!!!");
+var previous_point = {x:0, y:0, t:0};
+var _tabResetDist = 100;
 
 function keyUpHandler(event)
 {
 	var key = event.key || event.keyCode;
 	if (key === 'Tab' || key === 9){
-		findAndSelect()
+		if (calcDistance(previous_point,current_point) > _tabResetDist)
+		{
+			findAndSelect()
+			event.preventDefault();
+    		event.stopPropagation();
+		}
+		previous_point = current_point;
 	}
-	event.preventDefault();
-    event.stopPropagation();
 }
 
 document.addEventListener('keydown', keyUpHandler);
@@ -20,22 +26,32 @@ function findAndSelect()
 
 function findClosestElement(goal)
 {
-	var buttons = document.getElementsByTagName("button"); 
+	var buttons = document.getElementsByTagName("button");
+	var anchors = document.getElementsByTagName("a");
+	var inputs = document.getElementsByTagName("input");
+	var selects = document.getElementsByTagName("select");
+	var textAreas = document.getElementsByTagName("textarea");
+	var elementsByType = {buttons,anchors,inputs,selects,textAreas};
 	var shortestDistance = null;
-	for (var i = 0; i < buttons.length; i++) { 
-    	var rect = buttons[i].getBoundingClientRect()
-    	var distance = calcDistance(rect.x,rect.y,goal.x,goal.y)
-    	if (distance < shortestDistance || shortestDistance == null) { 
-        	shortestDistance = distance;
-        	closestEl = buttons[i]
-    	}
+
+	for (var type = 0; type < elementsByType.length; type++)
+	{
+		var elements = elementsByType[i];
+		for (var el = 0; el < elements.length; el++) { 
+    		var pos = elements[el].getBoundingClientRect()
+    		var distance = calcDistance(pos,goal)
+    		if (distance < shortestDistance || shortestDistance == null) { 
+        		shortestDistance = distance;
+        		closestEl = elements[i]
+    		}
+		}
 	}
 	return closestEl;
 }
 
-function calcDistance (x1, y1, x2, y2) {
-  var deltaX = Math.abs(x1-x2);
-  var deltaY = Math.abs(y1-y2);
+function calcDistance (pos1, pos2) {
+  var deltaX = Math.abs(pos1.x-pos2.x);
+  var deltaY = Math.abs(pos1.y-pos2.y);
   var dist = Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
   return (dist);
 };
