@@ -10831,7 +10831,9 @@ function store_points(x, y, k) {
      */
     var clickListener = function(event) {
 		if(webgazer.do_click_calibration){
-			recordScreenPosition(event.clientX, event.clientY, eventTypes[0]); // eventType[0] === 'click'
+		    if(eventTypes[0]==='click'){
+			    recordScreenPosition(event.clientX, event.clientY, eventTypes[0]); // eventType[0] === 'click'
+			}
 		}
     };
 
@@ -10896,7 +10898,7 @@ function store_points(x, y, k) {
             'data': regs[0].getData() || data
         };
 
-        storage.data = storage.data.slice(Math.max(arr.length - 50, 1))
+        storage.data = storage.data.slice(0, Math.min(storage.data.length , 20));
         window.localStorage.setItem(localstorageLabel, JSON.stringify(storage));
         //TODO data should probably be stored in webgazer object instead of each regression model
         //     -> requires duplication of data, but is likely easier on regression model implementors
@@ -11350,7 +11352,9 @@ function store_points(x, y, k) {
      *  @return {webgazer} this
      */
     webgazer.recordScreenPosition = function(x, y, eventType) {
+
         // give this the same weight that a click gets.
+
         recordScreenPosition(x, y, eventType);
         return webgazer;
     };
